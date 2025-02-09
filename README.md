@@ -8,4 +8,4 @@ Este repositório foi criado com o objetivo de armazenar os TPC's semanais da Un
 
 - **Nome:** Júlia Bughi Corrêa da Costa
 - **Número:** a103993
-- **Foto:**  
+- **Foto:** ![foto](/images/image.jpg) 
