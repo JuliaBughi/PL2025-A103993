@@ -1,38 +1,33 @@
 import sys
 
-def somador_onoff(texto):
-    isOn = True
+def somador_onoff(line):
+    on = True
     acc = 0
+    reading_value = 0
     i = 0
 
-    while i < len(texto):
-        valor = 0
-
-        if texto[i] in "0123456789" and isOn:
-            while texto[i] in "0123456789":
-                valor = valor * 10 + int(texto[i])
-                i += 1
-
-            acc += valor
-        
-        elif texto[i] in "Oo":
-            if i + 1 < len(texto) and texto[i+1] in "Nn":
-                isOn = True
-                i += 2
-            
-            elif i + 2 < len(texto) and texto[i+1] in "Ff" and texto[i+2] in "Ff":
-                isOn = False
-                i += 3
-            
-            else:
-                i += 1
-        
-        elif texto[i] == "=":
-            print(acc)
-            i += 1
-        
+    while i < len(line):
+        if line[i] in '0123456789' and on:
+            reading_value = reading_value * 10 + int(line[i])
         else:
-            i += 1
+            if reading_value > 0:
+                acc += reading_value
+                reading_value = 0
+            if line[i] == '=':
+                print(str(acc))
+            elif line[i:(i + 2)].lower() == 'on':
+                on = True
+                i += 1
+            elif line[i:(i + 3)].lower() == 'off':
+                on = False
+                i += 2
+        i += 1
+
+    if reading_value > 0:
+        acc += reading_value
+        reading_value = 0
+
+    print(f"Valor final do acumulador: {acc}")       
 
 for linha in sys.stdin:
     somador_onoff(linha)
