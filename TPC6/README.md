@@ -28,4 +28,4 @@ Para isso, foi necessário construir as regras de produção a seguir:
 
 O *calc_sin* traduz essas regras para código, enquanto o *calc_lex* define os símbolos (tokens).
 
-Através dos prints definidos nas funções que definem as regras, ao executar o programa, podemos ver a árvore construída
+Através dos prints nas funções que definem as regras, ao executar o programa, podemos ver a árvore construída.
