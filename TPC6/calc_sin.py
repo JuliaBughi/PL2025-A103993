@@ -15,12 +15,12 @@ def rec_term(simb):
         parseError(prox_simb)
         return None
 
-# Exp -> Mul Exp2
+# Exp -> Termo Exp2
 def rec_Exp():
-    print("Derivando por: Exp -> Mul Exp2")
-    value = rec_Mul()
-    value += rec_Exp2(value)
-    print("Reconheci: Exp -> Mul Exp2")
+    print("Derivando por: Exp -> Termo Exp2")
+    value = rec_Termo()
+    value = rec_Exp2(value)
+    print("Reconheci: Exp -> Termo Exp2, valor:", value)
     return value
 
 # Exp2 -> '+' Exp
@@ -31,42 +31,65 @@ def rec_Exp2(current_value):
     if prox_simb is not None and prox_simb.type == 'ADD':
         print("Derivando por: Exp2 -> '+' Exp")
         rec_term('ADD')
-        value = rec_Exp()
-        print("Reconheci: Exp2 -> '+' Exp")
-        return value
+        right_value = rec_Exp()
+        result = current_value + right_value
+        print("Reconheci: Exp2 -> '+' Exp, resultado parcial:", result)
+        return result
     elif prox_simb is not None and prox_simb.type == 'SUB':
         print("Derivando por: Exp2 -> '-' Exp")
         rec_term('SUB')
-        value = rec_Exp()
-        print("Reconheci: Exp2 -> '-' Exp")
-        return -value
+        right_value = rec_Exp()
+        result = current_value - right_value
+        print("Reconheci: Exp2 -> '-' Exp, resultado parcial:", result)
+        return result
     else:
         print("Derivando por: Exp2 -> epslon")
-        print("Reconheci: Exp2 -> epslon")
-        return 0
+        print("Reconheci: Exp2 -> epslon, valor atual:", current_value)
+        return current_value
 
-# Mul -> num Mul2
-def rec_Mul():
-    print("Derivando por: Mul -> num Mul2")
-    value = rec_term('NUM')
-    value *= rec_Mul2(value)
-    print("Reconheci: Mul -> num Mul2")
+# Termo -> Fator Termo2
+def rec_Termo():
+    print("Derivando por: Termo -> Fator Termo2")
+    value = rec_Fator()
+    value = rec_Termo2(value)
+    print("Reconheci: Termo -> Fator Termo2, valor:", value)
     return value
 
-# Mul2 -> '*' Mul
-# Mul2 -> epslon
-def rec_Mul2(current_value):
+# Termo2 -> '*' Termo
+# Termo2 -> epslon
+def rec_Termo2(current_value):
     global prox_simb
     if prox_simb is not None and prox_simb.type == 'MUL':
-        print("Derivando por: Mul2 -> '*' Mul")
+        print("Derivando por: Termo2 -> '*' Termo")
         rec_term('MUL')
-        value = rec_Mul()
-        print("Reconheci: Mul2 -> '*' Mul")
+        right_value = rec_Termo()
+        result = current_value * right_value
+        print("Reconheci: Termo2 -> '*' Termo, resultado parcial:", result)
+        return result
+    else:
+        print("Derivando por: Termo2 -> epslon")
+        print("Reconheci: Termo2 -> epslon, valor atual:", current_value)
+        return current_value
+
+# Fator -> '(' Exp ')'
+# Fator -> num
+def rec_Fator():
+    global prox_simb
+    if prox_simb is not None and prox_simb.type == 'AP':
+        print("Derivando por: Fator -> '(' Exp ')'")
+        rec_term('AP')
+        value = rec_Exp()
+        rec_term('FP')
+        print("Reconheci: Fator -> '(' Exp ')', valor:", value)
+        return value
+    elif prox_simb is not None and prox_simb.type == 'NUM':
+        print("Derivando por: Fator -> num")
+        value = rec_term('NUM')
+        print("Reconheci: Fator -> num, valor:", value)
         return value
     else:
-        print("Derivando por: Mul2 -> epslon")
-        print("Reconheci: Mul2 -> epslon")
-        return 1
+        parseError(prox_simb)
+        return None
 
 def rec_Parser(data):
     global prox_simb
@@ -74,3 +97,5 @@ def rec_Parser(data):
     prox_simb = lexer.token()
     result = rec_Exp()
     print("Resultado final: ", result)
+    return result
+

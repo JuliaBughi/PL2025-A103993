@@ -1,6 +1,6 @@
 import ply.lex as lex
 
-tokens = ('NUM', 'ADD', 'SUB', 'MUL')
+tokens = ('NUM', 'ADD', 'SUB', 'MUL', 'AP', 'FP')
 
 def t_NUM(p):
     r'\d+'
@@ -10,6 +10,8 @@ def t_NUM(p):
 t_ADD = r'\+'
 t_SUB = r'-'
 t_MUL = r'\*'
+t_AP = r'\('
+t_FP = r'\)'
 
 def t_newline(t):
     r'\n+'
