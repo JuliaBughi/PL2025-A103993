@@ -446,7 +446,7 @@ class CodeGenerator:
 
     def visit_while(self, node, context=None): 
         _while_keyword, expr_bool_node, stmt_node = node
-        loop_start_label = self.new_label("LOOP_START"); loop_end_label = self.new_label("LOOP_END")
+        loop_start_label = self.new_label("LOOPSTART"); loop_end_label = self.new_label("LOOPEND")
         
         self.emit_label(loop_start_label)
         self.visit(expr_bool_node, context) # Evaluate condition
@@ -457,7 +457,7 @@ class CodeGenerator:
 
     def visit_repeat(self, node, context=None): 
         _repeat_keyword, stmts_node_list, expr_bool_node = node
-        loop_start_label = self.new_label("REPEAT_START")
+        loop_start_label = self.new_label("REPEATSTART")
         
         self.emit_label(loop_start_label)
         self.visit_Statements(stmts_node_list, context) # Execute body
@@ -474,9 +474,9 @@ class CodeGenerator:
         self.visit(start_expr_node, context)
         self.emit_store_variable(iter_var_id)
         
-        loop_condition_label = self.new_label("FOR_COND")
-        loop_body_label = self.new_label("FOR_BODY")
-        loop_end_label = self.new_label("FOR_END")
+        loop_condition_label = self.new_label("FORCOND")
+        loop_body_label = self.new_label("FORBODY")
+        loop_end_label = self.new_label("FOREND")
         
         self.emit("JUMP", loop_condition_label) # Jump to condition check first
         
@@ -514,8 +514,8 @@ class CodeGenerator:
         if isinstance(node_value, int): self.emit("PUSHI", node_value)
         elif isinstance(node_value, float): self.emit("PUSHF", node_value)
         elif isinstance(node_value, str):
-            if node_value == 'TRUE': self.emit("PUSHI", 1) # PLY returns True/False for boolean tokens
-            elif node_value == 'FALSE': self.emit("PUSHI", 0)
+            if node_value == True: self.emit("PUSHI", 1) # PLY returns True/False for boolean tokens
+            elif node_value == False: self.emit("PUSHI", 0)
             else: self.emit("PUSHS", f'"{node_value}"') # String literal
         elif isinstance(node_value, bool): # Handle direct boolean values (True/False from PLY)
             self.emit("PUSHI", 1 if node_value else 0)
@@ -710,7 +710,7 @@ class CodeGenerator:
         
         elif func_name_lower == 'abs': 
             arg_type = arg_types[0] if arg_types else 'unknown'
-            positive_label = self.new_label("ABS_POS")
+            positive_label = self.new_label("ABSPOS")
             self.emit("DUP", 1) # Duplicate the number to check its sign
             if arg_type == 'real':
                 self.emit("PUSHF", 0.0)
@@ -730,9 +730,9 @@ class CodeGenerator:
             # Pascal round: round half away from zero.
             # x := round(y) => if y >= 0 then x := trunc(y + 0.5) else x := trunc(y - 0.5)
             # Assumes argument is 'real' based on PREDEFINED_FUNCTIONS_INFO
-            add_half_label = self.new_label("ROUND_ADD_HALF")
-            sub_half_label = self.new_label("ROUND_SUB_HALF")
-            truncate_label = self.new_label("ROUND_TRUNC")
+            add_half_label = self.new_label("ROUNDADDHALF")
+            sub_half_label = self.new_label("ROUNDSUBHALF")
+            truncate_label = self.new_label("ROUNDTRUNC")
 
             self.emit("DUP", 1)      # Duplicate the real number 'y' (stack: y, y)
             self.emit("PUSHF", 0.0)  # Push 0.0 (stack: y, y, 0.0)
